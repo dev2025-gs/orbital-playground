@@ -1,20 +1,23 @@
-import { Home, Rocket, GraduationCap, Settings } from "lucide-react";
+import { Home, Rocket, GraduationCap, Settings, Crosshair } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
 
 const navItems = [
-  { icon: Home, label: "Home", path: "/" },
-  { icon: Rocket, label: "Sandbox", path: "/sandbox" },
-  { icon: GraduationCap, label: "Academy", path: "/academy" },
-  { icon: Settings, label: "Settings", path: "/settings" },
+  { icon: Home, label: "CIC", path: "/" },
+  { icon: Rocket, label: "NAV", path: "/sandbox" },
+  { icon: Crosshair, label: "TAC", path: "/maneuver" },
+  { icon: GraduationCap, label: "DATA", path: "/academy" },
 ];
 
 export function BottomNav() {
   const location = useLocation();
 
   return (
-    <nav className="fixed bottom-0 left-0 right-0 z-50 glass-panel border-t border-border/50 px-2 py-2 md:hidden">
+    <nav className="fixed bottom-0 left-0 right-0 z-50 tactical-panel border-t border-border/50 px-2 py-2 md:hidden">
+      {/* Top accent line */}
+      <div className="absolute top-0 left-0 right-0 h-px bg-gradient-to-r from-transparent via-primary/50 to-transparent" />
+      
       <div className="flex items-center justify-around">
         {navItems.map((item) => {
           const isActive = location.pathname === item.path;
@@ -27,19 +30,20 @@ export function BottomNav() {
               {isActive && (
                 <motion.div
                   layoutId="bottomNavIndicator"
-                  className="absolute inset-0 rounded-xl bg-primary/20"
+                  className="absolute -top-2 left-1/2 -translate-x-1/2 w-8 h-0.5 bg-primary"
+                  style={{ boxShadow: "0 0 10px hsl(var(--primary))" }}
                   transition={{ type: "spring", bounce: 0.2, duration: 0.6 }}
                 />
               )}
               <item.icon
                 className={cn(
-                  "h-5 w-5 transition-all duration-300",
-                  isActive ? "text-primary text-glow-cyan" : "text-muted-foreground"
+                  "h-5 w-5 transition-all duration-200",
+                  isActive ? "text-primary text-glow-amber" : "text-muted-foreground"
                 )}
               />
               <span
                 className={cn(
-                  "text-xs font-display tracking-wide transition-all duration-300",
+                  "text-[10px] font-display tracking-widest transition-all duration-200",
                   isActive ? "text-primary" : "text-muted-foreground"
                 )}
               >

@@ -15,33 +15,33 @@ export function DataDashboard({ velocity, altitude, period, deltaV }: DataDashbo
       label: "VELOCITY",
       value: velocity.toFixed(2),
       unit: "km/s",
-      color: "text-primary",
+      colorClass: "text-primary data-readout",
     },
     {
       icon: ArrowUp,
       label: "ALTITUDE",
       value: altitude.toFixed(0),
       unit: "km",
-      color: "text-secondary",
+      colorClass: "text-secondary data-readout-red",
     },
     {
       icon: Clock,
       label: "PERIOD",
       value: period.toFixed(1),
       unit: "min",
-      color: "text-accent",
+      colorClass: "text-accent data-readout-green",
     },
     {
       icon: Zap,
-      label: "Δv",
+      label: "DELTA-V",
       value: deltaV.toFixed(2),
       unit: "km/s",
-      color: "text-primary",
+      colorClass: "text-primary data-readout",
     },
   ];
 
   return (
-    <div className="grid grid-cols-2 gap-3">
+    <div className="grid grid-cols-2 gap-2">
       {stats.map((stat, index) => (
         <motion.div
           key={stat.label}
@@ -51,16 +51,16 @@ export function DataDashboard({ velocity, altitude, period, deltaV }: DataDashbo
           className="stat-card"
         >
           <div className="flex items-center gap-2 mb-2">
-            <stat.icon className={`h-4 w-4 ${stat.color}`} />
-            <span className="text-xs text-muted-foreground font-display tracking-widest">
+            <stat.icon className={`h-3 w-3 ${stat.colorClass.split(' ')[0]}`} />
+            <span className="text-[9px] text-muted-foreground font-display tracking-widest">
               {stat.label}
             </span>
           </div>
           <div className="flex items-baseline gap-1">
-            <span className={`text-2xl font-mono font-bold ${stat.color} data-readout`}>
+            <span className={`text-xl font-mono font-bold ${stat.colorClass}`}>
               {stat.value}
             </span>
-            <span className="text-xs text-muted-foreground">{stat.unit}</span>
+            <span className="text-[10px] text-muted-foreground font-mono">{stat.unit}</span>
           </div>
         </motion.div>
       ))}

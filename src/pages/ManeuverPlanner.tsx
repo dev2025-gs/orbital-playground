@@ -3,10 +3,10 @@ import { motion, AnimatePresence } from "framer-motion";
 import { MainLayout } from "@/components/layout/MainLayout";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { ArrowRight, Play, RotateCcw, Rocket } from "lucide-react";
+import { ArrowRight, Play, RotateCcw, Rocket, Target, AlertTriangle } from "lucide-react";
 
-const EARTH_RADIUS = 6371; // km
-const MU = 398600.4418; // km³/s² (Earth's gravitational parameter)
+const EARTH_RADIUS = 6371;
+const MU = 398600.4418;
 
 interface BurnSchedule {
   deltaV1: number;
@@ -25,7 +25,7 @@ function calculateHohmannTransfer(r1: number, r2: number): BurnSchedule {
   const deltaV2 = Math.abs(v2 - vTransfer2);
   
   const a = (r1 + r2) / 2;
-  const transferTime = Math.PI * Math.sqrt(Math.pow(a, 3) / MU) / 60; // minutes
+  const transferTime = Math.PI * Math.sqrt(Math.pow(a, 3) / MU) / 60;
 
   return {
     deltaV1,
@@ -57,72 +57,74 @@ export default function ManeuverPlanner() {
 
   return (
     <MainLayout>
-      <div className="flex-1 p-4 md:p-8 overflow-auto">
+      <div className="flex-1 p-4 md:p-8 overflow-auto scanlines">
         <motion.div
           initial={{ opacity: 0, y: -20 }}
           animate={{ opacity: 1, y: 0 }}
           className="mb-8"
         >
+          <div className="flex items-center gap-2 mb-2">
+            <Target className="h-4 w-4 text-secondary" />
+            <span className="text-[10px] text-muted-foreground tracking-[0.3em]">TACTICAL CONSOLE</span>
+          </div>
           <h1 className="text-3xl md:text-4xl font-display font-bold mb-2">
-            <span className="orbital-gradient">Hohmann Transfer</span>
+            <span className="mcrn-gradient">HOHMANN TRANSFER</span>
           </h1>
-          <p className="text-muted-foreground">
-            Calculate the optimal two-burn maneuver to change orbits
+          <p className="text-muted-foreground font-mono text-sm">
+            CALCULATE OPTIMAL TWO-BURN SEQUENCE
           </p>
         </motion.div>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           {/* Input Panel */}
           <motion.div
             initial={{ opacity: 0, x: -20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="glass-panel p-6"
+            className="tactical-panel p-6 bracket-frame"
           >
-            <h2 className="text-lg font-display font-semibold mb-6 text-primary">
-              Orbit Parameters
+            <h2 className="text-sm font-display font-semibold mb-6 text-primary tracking-widest">
+              ORBIT PARAMETERS
             </h2>
             
             <div className="space-y-6">
               <div>
-                <label className="text-xs font-display text-muted-foreground tracking-widest mb-2 block">
-                  INITIAL ORBIT ALTITUDE (km)
+                <label className="text-[10px] font-display text-muted-foreground tracking-widest mb-2 block">
+                  INITIAL ALTITUDE (KM)
                 </label>
                 <Input
                   type="number"
                   value={initialAltitude}
                   onChange={(e) => setInitialAltitude(e.target.value)}
-                  className="font-mono"
                   placeholder="400"
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  ISS: ~420 km, Low Earth Orbit
+                <p className="text-[10px] text-muted-foreground mt-1 font-mono">
+                  ISS: ~420 KM // LOW EARTH ORBIT
                 </p>
               </div>
 
               <div className="flex justify-center">
-                <ArrowRight className="h-6 w-6 text-primary animate-pulse" />
+                <ArrowRight className="h-5 w-5 text-primary animate-pulse" />
               </div>
 
               <div>
-                <label className="text-xs font-display text-muted-foreground tracking-widest mb-2 block">
-                  TARGET ORBIT ALTITUDE (km)
+                <label className="text-[10px] font-display text-muted-foreground tracking-widest mb-2 block">
+                  TARGET ALTITUDE (KM)
                 </label>
                 <Input
                   type="number"
                   value={targetAltitude}
                   onChange={(e) => setTargetAltitude(e.target.value)}
-                  className="font-mono"
                   placeholder="35786"
                 />
-                <p className="text-xs text-muted-foreground mt-1">
-                  GEO: 35,786 km, Geostationary Orbit
+                <p className="text-[10px] text-muted-foreground mt-1 font-mono">
+                  GEO: 35,786 KM // GEOSTATIONARY
                 </p>
               </div>
 
-              <div className="flex gap-3">
-                <Button variant="orbital" onClick={handleCalculate} className="flex-1">
+              <div className="flex gap-2">
+                <Button variant="roci" onClick={handleCalculate} className="flex-1">
                   <Play className="h-4 w-4 mr-2" />
-                  Calculate
+                  COMPUTE
                 </Button>
                 <Button variant="ghost" onClick={handleReset}>
                   <RotateCcw className="h-4 w-4" />
@@ -135,10 +137,10 @@ export default function ManeuverPlanner() {
           <motion.div
             initial={{ opacity: 0, x: 20 }}
             animate={{ opacity: 1, x: 0 }}
-            className="glass-panel p-6"
+            className="tactical-panel p-6 bracket-frame"
           >
-            <h2 className="text-lg font-display font-semibold mb-6 text-secondary">
-              Burn Schedule
+            <h2 className="text-sm font-display font-semibold mb-6 text-secondary tracking-widest">
+              BURN SCHEDULE
             </h2>
 
             <AnimatePresence mode="wait">
@@ -150,97 +152,95 @@ export default function ManeuverPlanner() {
                   exit={{ opacity: 0, scale: 0.95 }}
                   className="space-y-6"
                 >
-                  {/* Visual Representation */}
-                  <div className="relative h-32 mb-8">
-                    <svg className="w-full h-full" viewBox="0 0 300 100">
+                  {/* Transfer Visualization */}
+                  <div className="relative h-28 mb-6">
+                    <svg className="w-full h-full" viewBox="0 0 300 90">
+                      {/* Grid lines */}
+                      <line x1="0" y1="45" x2="300" y2="45" stroke="hsl(var(--border))" strokeWidth="1" strokeDasharray="4 4" />
+                      
                       {/* Initial Orbit */}
                       <circle
-                        cx="50"
-                        cy="50"
-                        r="20"
+                        cx="40"
+                        cy="45"
+                        r="18"
                         fill="none"
                         stroke="hsl(var(--primary))"
                         strokeWidth="2"
-                        strokeDasharray={isAnimating ? "0 100" : "100 0"}
-                        className="transition-all duration-1000"
                       />
-                      {/* Transfer Ellipse */}
-                      <ellipse
-                        cx="150"
-                        cy="50"
-                        rx="100"
-                        ry="30"
+                      {/* Transfer Arc */}
+                      <path
+                        d="M 58 45 Q 150 -10 242 45"
                         fill="none"
                         stroke="hsl(var(--secondary))"
                         strokeWidth="2"
-                        strokeDasharray="5 5"
-                        opacity={isAnimating ? 1 : 0.5}
-                        className="transition-opacity duration-500"
+                        strokeDasharray="6 3"
+                        opacity={isAnimating ? 1 : 0.6}
                       />
                       {/* Target Orbit */}
                       <circle
-                        cx="250"
-                        cy="50"
-                        r="35"
+                        cx="260"
+                        cy="45"
+                        r="30"
                         fill="none"
                         stroke="hsl(var(--accent))"
                         strokeWidth="2"
                       />
                       {/* Burn Points */}
-                      <circle cx="70" cy="50" r="5" fill="hsl(var(--primary))" className={isAnimating ? "animate-pulse" : ""} />
-                      <circle cx="250" cy="15" r="5" fill="hsl(var(--secondary))" className={isAnimating ? "animate-pulse" : ""} />
+                      <circle cx="58" cy="45" r="5" fill="hsl(var(--primary))" className={isAnimating ? "animate-pulse" : ""} />
+                      <circle cx="260" cy="15" r="5" fill="hsl(var(--secondary))" className={isAnimating ? "animate-pulse" : ""} />
                       
                       {/* Labels */}
-                      <text x="50" y="85" fill="hsl(var(--muted-foreground))" fontSize="10" textAnchor="middle">Initial</text>
-                      <text x="250" y="95" fill="hsl(var(--muted-foreground))" fontSize="10" textAnchor="middle">Target</text>
+                      <text x="40" y="80" fill="hsl(var(--muted-foreground))" fontSize="9" textAnchor="middle" className="font-mono">ORIGIN</text>
+                      <text x="260" y="85" fill="hsl(var(--muted-foreground))" fontSize="9" textAnchor="middle" className="font-mono">TARGET</text>
                     </svg>
                   </div>
 
                   {/* Burn Details */}
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="stat-card">
                       <div className="flex items-center gap-2 mb-2">
-                        <Rocket className="h-4 w-4 text-primary" />
-                        <span className="text-xs font-display text-muted-foreground">BURN 1</span>
+                        <Rocket className="h-3 w-3 text-primary" />
+                        <span className="text-[9px] font-display text-muted-foreground tracking-widest">BURN 1</span>
                       </div>
-                      <p className="text-2xl font-mono font-bold text-primary data-readout">
+                      <p className="text-xl font-mono font-bold text-primary data-readout">
                         {burnSchedule.deltaV1.toFixed(3)}
                       </p>
-                      <p className="text-xs text-muted-foreground">km/s Δv</p>
+                      <p className="text-[10px] text-muted-foreground font-mono">KM/S Δv</p>
                     </div>
 
                     <div className="stat-card">
                       <div className="flex items-center gap-2 mb-2">
-                        <Rocket className="h-4 w-4 text-secondary rotate-180" />
-                        <span className="text-xs font-display text-muted-foreground">BURN 2</span>
+                        <Rocket className="h-3 w-3 text-secondary rotate-180" />
+                        <span className="text-[9px] font-display text-muted-foreground tracking-widest">BURN 2</span>
                       </div>
-                      <p className="text-2xl font-mono font-bold text-secondary data-readout">
+                      <p className="text-xl font-mono font-bold text-secondary data-readout-red">
                         {burnSchedule.deltaV2.toFixed(3)}
                       </p>
-                      <p className="text-xs text-muted-foreground">km/s Δv</p>
+                      <p className="text-[10px] text-muted-foreground font-mono">KM/S Δv</p>
                     </div>
                   </div>
 
-                  <div className="grid grid-cols-2 gap-4">
+                  <div className="grid grid-cols-2 gap-3">
                     <div className="stat-card">
-                      <span className="text-xs font-display text-muted-foreground">TRANSFER TIME</span>
-                      <p className="text-xl font-mono font-bold text-accent data-readout">
+                      <span className="text-[9px] font-display text-muted-foreground tracking-widest">TRANSFER TIME</span>
+                      <p className="text-lg font-mono font-bold text-accent data-readout-green">
                         {burnSchedule.transferTime.toFixed(1)}
                       </p>
-                      <p className="text-xs text-muted-foreground">minutes</p>
+                      <p className="text-[10px] text-muted-foreground font-mono">MINUTES</p>
                     </div>
 
                     <div className="stat-card">
-                      <span className="text-xs font-display text-muted-foreground">TOTAL Δv</span>
-                      <p className="text-xl font-mono font-bold text-primary data-readout">
+                      <span className="text-[9px] font-display text-muted-foreground tracking-widest">TOTAL Δv</span>
+                      <p className="text-lg font-mono font-bold text-primary data-readout">
                         {burnSchedule.totalDeltaV.toFixed(3)}
                       </p>
-                      <p className="text-xs text-muted-foreground">km/s</p>
+                      <p className="text-[10px] text-muted-foreground font-mono">KM/S</p>
                     </div>
                   </div>
 
-                  <Button variant="prograde" className="w-full">
-                    Execute Transfer
+                  <Button variant="mcrn" className="w-full">
+                    <AlertTriangle className="h-4 w-4 mr-2" />
+                    EXECUTE TRANSFER
                   </Button>
                 </motion.div>
               ) : (
@@ -251,9 +251,9 @@ export default function ManeuverPlanner() {
                   exit={{ opacity: 0 }}
                   className="flex flex-col items-center justify-center h-64 text-center"
                 >
-                  <Rocket className="h-12 w-12 text-muted-foreground/30 mb-4" />
-                  <p className="text-muted-foreground">
-                    Enter orbit parameters and click Calculate to see the burn schedule
+                  <Rocket className="h-10 w-10 text-muted-foreground/30 mb-4" />
+                  <p className="text-muted-foreground text-sm font-mono">
+                    ENTER PARAMETERS TO COMPUTE BURN SCHEDULE
                   </p>
                 </motion.div>
               )}
