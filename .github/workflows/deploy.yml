@@ -5,6 +5,9 @@ on:
         branches:
             - feature/about-page
 
+permissions:
+    contents: write
+
 jobs:
     build-and-deploy:
         runs-on: ubuntu-latest
@@ -12,6 +15,32 @@ jobs:
         steps:
             - name: Checkout
               uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Run ESLint autofix
+              run: |
+                  npm run lint --if-present -- --fix || true
+
+            - name: Commit and push lint fixes
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add -A
+                  if ! git diff --quiet --cached; then
+                    git commit -m "chore: apply lint fixes [ci skip]"
+                    git push origin HEAD:${{ github.ref_name }}
+                  else
+                    echo "No lint fixes to commit"
+                  fi
 
             - name: Set up Docker Buildx
               uses: docker/setup-buildx-action@v2
