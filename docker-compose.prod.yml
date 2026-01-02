@@ -4,7 +4,7 @@ services:
     image: apsis:latest
     restart: always
     ports:
-      - "80:80"
+      - "8080:80"
     networks:
       - web
 
