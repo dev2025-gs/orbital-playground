@@ -7,7 +7,7 @@ services:
     volumes:
       - ./:/app
       - /app/node_modules
-    command: sh -c "npm install --silent || true && npm run dev -- --host 0.0.0.0"
+    command: sh -c "npm install --silent || true && rm -rf dist && npm run dev -- --host 0.0.0.0"
     ports:
       - "5173:5173"
     environment:
