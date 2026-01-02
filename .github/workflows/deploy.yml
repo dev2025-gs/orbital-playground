@@ -1,0 +1,82 @@
+name: Build and Deploy to dev.apsis.best
+
+on:
+    push:
+        branches:
+            - feature/about-page
+
+permissions:
+    contents: write
+
+jobs:
+    build-and-deploy:
+        runs-on: ubuntu-latest
+        environment: dev
+        steps:
+            - name: Checkout
+              uses: actions/checkout@v4
+
+            - name: Set up Node.js
+              uses: actions/setup-node@v4
+              with:
+                  node-version: 20
+
+            - name: Install dependencies
+              run: npm ci
+
+            - name: Run ESLint autofix
+              run: |
+                  npm run lint --if-present -- --fix || true
+
+            - name: Commit and push lint fixes
+              env:
+                  GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+              run: |
+                  git config user.name "github-actions[bot]"
+                  git config user.email "github-actions[bot]@users.noreply.github.com"
+                  git add -A
+                  if ! git diff --quiet --cached; then
+                    git commit -m "chore: apply lint fixes [ci skip]"
+                    git push origin HEAD:${{ github.ref_name }}
+                  else
+                    echo "No lint fixes to commit"
+                  fi
+
+            - name: Set up Docker Buildx
+              uses: docker/setup-buildx-action@v2
+
+            - name: Build image and save tar
+              run: |
+                  docker build -t apsis:latest .
+                  docker save apsis:latest -o apsis.tar
+
+            - name: Copy files to remote host
+              uses: appleboy/scp-action@master
+              with:
+                  host: ${{ secrets.DEV_EC2_HOST }}
+                  username: ${{ secrets.DEV_EC2_USERNAME }}
+                  key: ${{ secrets.DEV_EC2_SSH_KEY }}
+                  port: 22
+                  source: "apsis.tar,docker-compose.prod.yml,deploy/nginx/dev.apsis.best.conf"
+                  target: "~/apsis_deploy/"
+
+            - name: Remote deploy commands
+              uses: appleboy/ssh-action@master
+              with:
+                  host: ${{ secrets.DEV_EC2_HOST }}
+                  username: ${{ secrets.DEV_EC2_USERNAME }}
+                  key: ${{ secrets.DEV_EC2_SSH_KEY }}
+                  port: 22
+                  script: |
+                      set -e
+                      mkdir -p ~/apsis_deploy
+                      mv ~/apsis_deploy/apsis.tar ~/apsis_deploy/apsis.tar || true
+                      mv ~/apsis_deploy/docker-compose.prod.yml ~/apsis_deploy/docker-compose.prod.yml || true
+                      mv ~/apsis_deploy/dev.apsis.best.conf ~/apsis_deploy/dev.apsis.best.conf || true
+                      cd ~/apsis_deploy
+                      docker load -i apsis.tar
+                      docker compose -f docker-compose.prod.yml up -d --remove-orphans
+                      sudo mv dev.apsis.best.conf /etc/nginx/sites-available/dev.apsis.best.conf || sudo tee /etc/nginx/sites-available/dev.apsis.best.conf < dev.apsis.best.conf
+                      sudo ln -sf /etc/nginx/sites-available/dev.apsis.best.conf /etc/nginx/sites-enabled/dev.apsis.best.conf
+                      sudo systemctl reload nginx || sudo service nginx reload || true
+                      sudo certbot --nginx -d dev.apsis.best --non-interactive --agree-tos -m ${{ secrets.LETSENCRYPT_EMAIL }} || echo 'certbot failed or already configured'
