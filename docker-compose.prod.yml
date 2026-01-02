@@ -1,0 +1,13 @@
+version: '3.8'
+services:
+  apsis:
+    image: apsis:latest
+    restart: always
+    ports:
+      - "80:80"
+    networks:
+      - web
+
+networks:
+  web:
+    driver: bridge

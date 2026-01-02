@@ -9,6 +9,7 @@ import ManeuverPlanner from "./pages/ManeuverPlanner";
 import Academy from "./pages/Academy";
 import Settings from "./pages/Settings";
 import NotFound from "./pages/NotFound";
+import About from "./pages/About";
 
 const queryClient = new QueryClient();
 
@@ -20,6 +21,7 @@ const App = () => (
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<Dashboard />} />
+          <Route path="/about" element={<About />} />
           <Route path="/sandbox" element={<Sandbox />} />
           <Route path="/maneuver" element={<ManeuverPlanner />} />
           <Route path="/academy" element={<Academy />} />

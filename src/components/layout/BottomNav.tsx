@@ -1,4 +1,4 @@
-import { Home, Rocket, GraduationCap, Settings, Crosshair } from "lucide-react";
+import { Home, Rocket, GraduationCap, Settings, Crosshair, User } from "lucide-react";
 import { NavLink, useLocation } from "react-router-dom";
 import { cn } from "@/lib/utils";
 import { motion } from "framer-motion";
@@ -8,6 +8,7 @@ const navItems = [
   { icon: Rocket, label: "NAV", path: "/sandbox" },
   { icon: Crosshair, label: "TAC", path: "/maneuver" },
   { icon: GraduationCap, label: "DATA", path: "/academy" },
+  { icon: User, label: "ABOUT", path: "/about" },
 ];
 
 export function BottomNav() {
