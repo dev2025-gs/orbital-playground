@@ -14,9 +14,9 @@ export default {
     },
     extend: {
       fontFamily: {
-        display: ["Orbitron", "sans-serif"],
+        display: ["Rajdhani", "sans-serif"],
         body: ["Exo 2", "sans-serif"],
-        mono: ["JetBrains Mono", "Consolas", "monospace"],
+        mono: ["Share Tech Mono", "Consolas", "monospace"],
       },
       colors: {
         border: "hsl(var(--border))",
@@ -52,19 +52,29 @@ export default {
           DEFAULT: "hsl(var(--card))",
           foreground: "hsl(var(--card-foreground))",
         },
-        cyan: {
-          glow: "hsl(var(--cyan-glow))",
+        info: {
+          DEFAULT: "hsl(var(--info))",
+          foreground: "hsl(var(--info-foreground))",
         },
-        magenta: {
-          glow: "hsl(var(--magenta-glow))",
+        // Expanse Faction Colors
+        roci: {
+          amber: "hsl(var(--roci-amber))",
+          dim: "hsl(var(--roci-amber-dim))",
         },
-        purple: {
-          glow: "hsl(var(--purple-glow))",
+        mcrn: {
+          red: "hsl(var(--mcrn-red))",
+          dim: "hsl(var(--mcrn-red-dim))",
         },
-        navy: {
-          deep: "hsl(var(--navy-deep))",
-          medium: "hsl(var(--navy-medium))",
-          light: "hsl(var(--navy-light))",
+        opa: {
+          green: "hsl(var(--opa-green))",
+          dim: "hsl(var(--opa-green-dim))",
+        },
+        un: {
+          blue: "hsl(var(--un-blue))",
+          dim: "hsl(var(--un-blue-dim))",
+        },
+        belt: {
+          steel: "hsl(var(--belt-steel))",
         },
         sidebar: {
           DEFAULT: "hsl(var(--sidebar-background))",
@@ -103,14 +113,6 @@ export default {
           "0%": { transform: "translateY(100%)", opacity: "0" },
           "100%": { transform: "translateY(0)", opacity: "1" },
         },
-        pulse: {
-          "0%, 100%": { opacity: "1" },
-          "50%": { opacity: "0.5" },
-        },
-        shimmer: {
-          "0%": { backgroundPosition: "-200% 0" },
-          "100%": { backgroundPosition: "200% 0" },
-        },
       },
       animation: {
         "accordion-down": "accordion-down 0.2s ease-out",
@@ -118,13 +120,6 @@ export default {
         "fade-in": "fade-in 0.5s ease-out",
         "scale-in": "scale-in 0.3s ease-out",
         "slide-up": "slide-up 0.4s ease-out",
-        pulse: "pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite",
-        shimmer: "shimmer 2s linear infinite",
-      },
-      backgroundImage: {
-        "gradient-radial": "radial-gradient(var(--tw-gradient-stops))",
-        "orbital-gradient": "linear-gradient(135deg, hsl(var(--cyan-glow)), hsl(var(--magenta-glow)))",
-        "card-gradient": "linear-gradient(145deg, hsl(var(--card)), hsl(var(--background)))",
       },
     },
   },
