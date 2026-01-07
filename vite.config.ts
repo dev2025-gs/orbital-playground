@@ -4,7 +4,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/orbital-playground/', // 👈 REQUIRED for GitHub Pages
+  base: '/apsis/', // 👈 Match your GitHub repo name
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
