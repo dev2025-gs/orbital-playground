@@ -4,10 +4,10 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
+  base: '/orbital-playground/', // 👈 REQUIRED for GitHub Pages
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
     },
   },
-  base: '/orbital-playground/',
 })
