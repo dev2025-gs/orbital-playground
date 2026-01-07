@@ -9,7 +9,5 @@ export default defineConfig({
       '@': path.resolve(__dirname, './src'),
     },
   },
-  base: process.env.GITHUB_PAGES === 'true'
-    ? '/orbital-playground/'
-    : '/',
+  base: '/orbital-playground/',
 })
