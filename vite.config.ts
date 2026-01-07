@@ -4,7 +4,7 @@ import path from 'path'
 
 export default defineConfig({
   plugins: [react()],
-  base: '/apsis/', // 👈 Match your GitHub repo name
+  base: '/apsis/',
   resolve: {
     alias: {
       '@': path.resolve(__dirname, './src'),
