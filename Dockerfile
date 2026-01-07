@@ -1,16 +1,16 @@
 # Use an official Node.js image for building the app
-FROM node:20-alpine AS builder
+FROM oven/bun:latest AS builder
 
 # Set working directory
 WORKDIR /app
 
 # Install dependencies
-COPY package.json package-lock.json* ./
-RUN npm install
+COPY package.json bun.lockb ./
+RUN bun install
 
 # Copy source and build
 COPY . .
-RUN npm run build
+RUN bun run build
 
 # Use nginx to serve the built files
 FROM nginx:stable-alpine AS production
